@@ -1,8 +1,16 @@
-import { LogOut, Bell } from 'lucide-react';
+import { LogOut, Bell, RefreshCw } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
-  const { signOut, profile } = useAuth();
+  const { signOut, profile, refreshProfile } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refreshProfile();
+    setRefreshing(false);
+  };
 
   return (
     <header className="h-16 border-b bg-white flex items-center justify-between px-6" style={{ borderColor: '#E5E7EB' }}>
@@ -12,7 +20,16 @@ export default function Header() {
         </h2>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+          title="Refresh profile"
+        >
+          <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} style={{ color: '#2E2E2E' }} />
+        </button>
+
         <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors relative">
           <Bell className="w-5 h-5" style={{ color: '#2E2E2E' }} />
           <span className="absolute top-1 right-1 w-2 h-2 rounded-full" style={{ backgroundColor: '#007A3D' }}></span>
